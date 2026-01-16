@@ -20,22 +20,22 @@ def capture_frame():
     return small
 
 def frame_to_ascii(frame):
-    """Convert frame to ASCII chars with ANSI color."""
+    #  frame to ASCII chars with ANSI color
     ascii_frame = []
     for row in frame:
         line = ""
         for pixel in row:
             b, g, r = pixel
-            # Convert pixel brightness for ASCII selection
+            # pixel brightness for ASCII selection
             brightness = int(0.299*r + 0.587*g + 0.114*b)
             char = ASCII_CHARS[brightness * (len(ASCII_CHARS)-1)//255]
-            # Add ANSI color (foreground)
+            # ANSI color (foreground)
             line += f"\033[38;2;{r};{g};{b}m{char}\033[0m"
         ascii_frame.append(line)
     return ascii_frame
 
 def draw_terminal(ascii_frame):
-    print("\033[H", end="")  # Move cursor to top-left
+    print("\033[H", end="")  
     for line in ascii_frame:
         print(line)
     sys.stdout.flush()

@@ -48,11 +48,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 );
 
                 println!("{}", "=".repeat(40));
-                println!(
-                    "Setting up the client for Client_ID: {}",
-                    env::var("CLIENT_ID")?
-                );
-                println!("{}", "=".repeat(40));
 
                 break google_sheets.spreadsheets();
             }
@@ -81,9 +76,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     env::var("REFRESH_TOKEN")?,
                 );
 
-                // Get the URL to request consent from the user.
-                // You can optionally pass in scopes. If none are provided, then the
-                // resulting URL will not have any scopes.
+              
                 let user_consent_url = google_sheets.user_consent_url(&[
                     "https://www.googleapis.com/auth/spreadsheets".to_string(),
                 ]);
@@ -134,7 +127,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
 
-    let sheets_id = "1MgySZVFWaSdYCsEKn2pdrdNAJmBy5Y__g_-kQGf-pP0";
+    let sheets_id = "1q3Py3vSx1HVKqxgm8eplNdkCltO5zQi0Wp8Hybj_U2s";
 
     // let range = ["F1:F2".to_string()];
     // let metadata = &spreadsheets.get(sheets_id, true, &range).await;
@@ -144,12 +137,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let compute_pixels = compute::ComputeConvolution::extract_pixels_feature(&image_pixel_data);
 
-    let response = batch_update::draw_in_sheets(&compute_pixels, &spreadsheets, sheets_id).await?;
-    println!("{:?}", response);
+    batch_update::draw_in_sheets(&compute_pixels, &spreadsheets, sheets_id).await?;
+    
+    println!("Rendered image to Google Sheets!");
+    println!("View at: https://docs.google.com/spreadsheets/d/{}", sheets_id);
 
-    // You can additionally refresh the access token with the following.
-    // You must have a refresh token to be able to call this function.
-    // access_token = google_sheets.refresh_access_token().await.unwrap();
+    
 
     Ok(())
 }

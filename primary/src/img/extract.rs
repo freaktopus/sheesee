@@ -1,4 +1,4 @@
-use image::Rgb;
+use image::{Rgb, imageops::FilterType};
 
 pub struct ImageFeature {
     pub pixels_data: Vec<Vec<(u8, u8, u8)>>,
@@ -6,11 +6,16 @@ pub struct ImageFeature {
 
 impl ImageFeature {
     pub fn extract_pixels_feature() -> Self {
-        let img = image::ImageReader::open("image/ideax.jpg")
+        let img = image::ImageReader::open("image/sample.jpg")
             .expect("Failed to open image")
             .decode()
             .expect("Failed to decode image")
             .to_rgb8();
+
+        // image resized to 400x300
+        let img = image::imageops::resize(&img, 400, 300, FilterType::Lanczos3);
+        
+        println!("Image resized to 400x300 pixels");
 
         let (width, height) = img.dimensions();
 

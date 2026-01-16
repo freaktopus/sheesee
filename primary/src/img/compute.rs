@@ -31,7 +31,7 @@ impl ComputeConvolution {
                     }
                 }
 
-                // Clamp values to 0..255
+                // clamping values to 0..255
                 let r = sum_r.clamp(0, 255) as u8;
                 let g = sum_g.clamp(0, 255) as u8;
                 let b = sum_b.clamp(0, 255) as u8;
