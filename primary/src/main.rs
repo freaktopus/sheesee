@@ -63,7 +63,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .route("/", get(oauth_callback))
                     .layer(Extension(oauth_store.clone()));
 
-                let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
+                let listener = tokio::net::TcpListener::bind("127.0.0.1:3000").await?;
                 let server = tokio::spawn(async move {
                     axum::serve(listener, app).await.unwrap();
                 });
@@ -133,7 +133,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let metadata = &spreadsheets.get(sheets_id, true, &range).await;
     // println!("{:?}", metadata);
 
-    let image_pixel_data = extract::ImageFeature::extract_pixels_feature();
+    // Ask user for image path
+    print!("Enter the path to the image file: ");
+    io::stdout().flush()?;
+    let mut image_path = String::new();
+    io::stdin().read_line(&mut image_path)?;
+    let image_path = image_path.trim();
+
+    println!("{}", "=".repeat(40));
+    println!("Processing image: {}", image_path);
+    println!("{}", "=".repeat(40));
+
+    let image_pixel_data = extract::ImageFeature::extract_pixels_feature(image_path);
 
     let compute_pixels = compute::ComputeConvolution::extract_pixels_feature(&image_pixel_data);
 

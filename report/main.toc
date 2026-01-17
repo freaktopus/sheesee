@@ -1,0 +1,141 @@
+\contentsline {chapter}{Acknowledgement}{i}{chapter*.1}%
+\contentsline {chapter}{Abstract}{ii}{chapter*.2}%
+\contentsline {chapter}{List of Acronyms and Abbreviations}{vi}{chapter*.3}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Introduction}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Background}{1}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Digital Image Processing}{1}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Convolution Operations}{2}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}Google Sheets as a Visualization Medium}{2}{subsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.2.4}Rust Programming Language}{3}{subsection.1.2.4}%
+\contentsline {section}{\numberline {1.3}Objectives}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Contributions}{4}{section.1.4}%
+\contentsline {chapter}{\numberline {2}System Analysis}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Introduction}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}General Block Diagram}{5}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Functional Requirements}{5}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}FR1: Image Input and Validation}{6}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}FR2: Image Resizing}{6}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}FR3: Convolution Processing}{7}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}FR4: User Authentication}{7}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}FR5: Google Sheets Integration}{7}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}FR6: Command-Line Interface}{7}{subsection.2.3.6}%
+\contentsline {section}{\numberline {2.4}Non-Functional Requirements}{8}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}NFR1: Performance}{8}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}NFR2: Reliability}{8}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}NFR3: Security}{8}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}NFR4: Usability}{8}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}NFR5: Maintainability}{9}{subsection.2.4.5}%
+\contentsline {subsection}{\numberline {2.4.6}NFR6: Portability}{9}{subsection.2.4.6}%
+\contentsline {section}{\numberline {2.5}Software Requirements}{9}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Programming Language and Compiler}{9}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Core Dependencies}{9}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Development Tools}{9}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Runtime Environment}{10}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Google Cloud Platform Requirements}{10}{subsection.2.5.5}%
+\contentsline {section}{\numberline {2.6}Hardware Requirements}{10}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Justification for Hardware Requirements}{11}{subsection.2.6.1}%
+\contentsline {section}{\numberline {2.7}System Constraints}{11}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Technical Constraints}{11}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Design Constraints}{11}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Operational Constraints}{12}{subsection.2.7.3}%
+\contentsline {chapter}{\numberline {3}System Implementation}{13}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction}{13}{section.3.1}%
+\contentsline {section}{\numberline {3.2}System Architecture}{13}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Configuration and Setup}{13}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Environment Variables}{13}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Dependency Management}{14}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Image Processing Implementation}{15}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Image Loading and Resizing}{15}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Convolution Algorithm}{16}{subsection.3.4.2}%
+\contentsline {section}{\numberline {3.5}OAuth 2.0 Authentication}{18}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Authentication Flow}{18}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Implementation Details}{18}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}Google Sheets Integration}{20}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Data Structure Transformation}{20}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Batch Update Request}{21}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}Cell Dimension Adjustment}{21}{subsection.3.6.3}%
+\contentsline {section}{\numberline {3.7}Command-Line Interface}{22}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}User Interaction Flow}{22}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}Progress Feedback}{23}{subsection.3.7.2}%
+\contentsline {section}{\numberline {3.8}Error Handling}{23}{section.3.8}%
+\contentsline {section}{\numberline {3.9}Asynchronous Operations}{23}{section.3.9}%
+\contentsline {section}{\numberline {3.10}Memory Management}{24}{section.3.10}%
+\contentsline {section}{\numberline {3.11}Performance Considerations}{24}{section.3.11}%
+\contentsline {subsection}{\numberline {3.11.1}Compilation Optimizations}{24}{subsection.3.11.1}%
+\contentsline {subsection}{\numberline {3.11.2}Algorithmic Efficiency}{25}{subsection.3.11.2}%
+\contentsline {chapter}{\numberline {4}Results and Discussion}{26}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Introduction}{26}{section.4.1}%
+\contentsline {section}{\numberline {4.2}System Execution}{26}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Initial Setup and Authentication}{26}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}OAuth 2.0 Flow}{26}{subsection.4.2.2}%
+\contentsline {section}{\numberline {4.3}Image Processing Results}{27}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Input Image}{27}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Resizing Operation}{28}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Convolution Results}{28}{subsection.4.3.3}%
+\contentsline {section}{\numberline {4.4}Google Sheets Visualization}{29}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Spreadsheet Rendering}{29}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Zoomed Views}{30}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Cell Properties}{30}{subsection.4.4.3}%
+\contentsline {section}{\numberline {4.5}Performance Measurements}{31}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Execution Time Analysis}{31}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Memory Usage}{32}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Throughput Metrics}{32}{subsection.4.5.3}%
+\contentsline {section}{\numberline {4.6}Test Cases and Validation}{32}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Different Image Types}{32}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Edge Cases}{33}{subsection.4.6.2}%
+\contentsline {section}{\numberline {4.7}Visual Quality Assessment}{33}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Image Fidelity}{33}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Comparison with Traditional Displays}{33}{subsection.4.7.2}%
+\contentsline {section}{\numberline {4.8}Limitations Observed}{33}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Comparison with Project Objectives}{35}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Discussion}{35}{section.4.10}%
+\contentsline {chapter}{\numberline {5}Conclusion and Recommendations}{38}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Conclusion}{38}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Key Achievements}{38}{subsection.5.1.1}%
+\contentsline {paragraph}{Technical Implementation}{38}{subsection.5.1.1}%
+\contentsline {paragraph}{Performance and Reliability}{38}{subsection.5.1.1}%
+\contentsline {paragraph}{Educational Value}{39}{subsection.5.1.1}%
+\contentsline {paragraph}{Innovation}{39}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Research Contributions}{39}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Validation of Objectives}{39}{subsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.1.4}Impact and Applications}{40}{subsection.5.1.4}%
+\contentsline {section}{\numberline {5.2}Limitations}{40}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Technical Limitations}{40}{subsection.5.2.1}%
+\contentsline {paragraph}{Fixed Resolution}{40}{subsection.5.2.1}%
+\contentsline {paragraph}{Single Convolution Kernel}{40}{subsection.5.2.1}%
+\contentsline {paragraph}{Border Pixel Handling}{40}{subsection.5.2.1}%
+\contentsline {paragraph}{Network Dependency}{40}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Performance Limitations}{41}{subsection.5.2.2}%
+\contentsline {paragraph}{API Upload Time}{41}{subsection.5.2.2}%
+\contentsline {paragraph}{No Real-Time Processing}{41}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Usability Limitations}{41}{subsection.5.2.3}%
+\contentsline {paragraph}{CLI-Only Interface}{41}{subsection.5.2.3}%
+\contentsline {paragraph}{Manual Configuration}{41}{subsection.5.2.3}%
+\contentsline {paragraph}{Limited Error Recovery}{41}{subsection.5.2.3}%
+\contentsline {section}{\numberline {5.3}Future Enhancements}{41}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Short-Term Enhancements}{42}{subsection.5.3.1}%
+\contentsline {paragraph}{Multiple Kernel Support}{42}{subsection.5.3.1}%
+\contentsline {paragraph}{Configurable Resolution}{42}{lstnumber.-2.3}%
+\contentsline {paragraph}{Progress Bar}{42}{lstnumber.-3.1}%
+\contentsline {paragraph}{Improved Error Messages}{42}{lstnumber.-3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Medium-Term Enhancements}{43}{subsection.5.3.2}%
+\contentsline {paragraph}{Graphical User Interface}{43}{subsection.5.3.2}%
+\contentsline {paragraph}{Batch Processing}{43}{subsection.5.3.2}%
+\contentsline {paragraph}{Caching and Resumption}{43}{subsection.5.3.2}%
+\contentsline {paragraph}{Compression and Optimization}{43}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Long-Term Enhancements}{44}{subsection.5.3.3}%
+\contentsline {paragraph}{Real-Time Video Processing}{44}{subsection.5.3.3}%
+\contentsline {paragraph}{Animation Support}{44}{subsection.5.3.3}%
+\contentsline {paragraph}{Collaborative Features}{44}{subsection.5.3.3}%
+\contentsline {paragraph}{Alternative Cloud Platforms}{44}{subsection.5.3.3}%
+\contentsline {paragraph}{Machine Learning Integration}{45}{subsection.5.3.3}%
+\contentsline {paragraph}{3D Visualization}{45}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}Research Directions}{45}{subsection.5.3.4}%
+\contentsline {paragraph}{Performance Studies}{45}{subsection.5.3.4}%
+\contentsline {paragraph}{Alternative Visualizations}{45}{subsection.5.3.4}%
+\contentsline {section}{\numberline {5.4}Recommendations}{45}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Technical Recommendations}{46}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Project Management Recommendations}{46}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Educational Recommendations}{46}{subsection.5.4.3}%
+\contentsline {section}{\numberline {5.5}Final Remarks}{47}{section.5.5}%

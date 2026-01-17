@@ -1,0 +1,257 @@
+\chapter{System Analysis}
+
+\section{Introduction}
+
+System analysis is a critical phase in software development that involves understanding the requirements, constraints, and design considerations before implementation. This chapter presents a comprehensive analysis of the Sheesee image processing system, including its architecture, functional and non-functional requirements, and the hardware and software specifications needed for successful deployment.
+
+\section{General Block Diagram}
+
+The system architecture follows a pipeline-based design where data flows through distinct processing stages. Figure~\ref{fig:block_diagram} illustrates the high-level structure of the system.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{block_diagram.png}
+    \caption{General Block Diagram of the Sheesee System}
+    \label{fig:block_diagram}
+\end{figure}
+
+The system consists of the following major components:
+
+\begin{enumerate}
+    \item \textbf{Input Module:} Accepts image files from the local filesystem
+    \item \textbf{Image Processing Module:} Handles resizing and convolution operations
+    \item \textbf{Authentication Module:} Manages OAuth 2.0 flow for Google API access
+    \item \textbf{Data Transformation Module:} Converts pixel data to Google Sheets format
+    \item \textbf{API Integration Module:} Handles communication with Google Sheets API
+    \item \textbf{Output Module:} Provides user feedback and spreadsheet URL
+\end{enumerate}
+
+\section{Functional Requirements}
+
+Functional requirements specify what the system must do. The following are the key functional requirements of the Sheesee system:
+
+\subsection{FR1: Image Input and Validation}
+\begin{itemize}
+    \item The system shall accept image files in common formats (JPEG, PNG, BMP, GIF)
+    \item The system shall validate the input file to ensure it is a readable image
+    \item The system shall handle file read errors gracefully with appropriate error messages
+\end{itemize}
+
+\subsection{FR2: Image Resizing}
+\begin{itemize}
+    \item The system shall resize any input image to exactly 400×300 pixels
+    \item The system shall use Lanczos3 interpolation algorithm for high-quality resizing
+    \item The system shall maintain aspect ratio considerations during resizing
+    \item The system shall support both upscaling and downscaling operations
+\end{itemize}
+
+\subsection{FR3: Convolution Processing}
+\begin{itemize}
+    \item The system shall apply a 3×3 sharpening kernel to the resized image
+    \item The system shall perform convolution operations on all three color channels (RGB)
+    \item The system shall clamp pixel values to the valid range [0, 255]
+    \item The system shall handle boundary pixels appropriately (excluding 1-pixel border)
+\end{itemize}
+
+\subsection{FR4: User Authentication}
+\begin{itemize}
+    \item The system shall implement OAuth 2.0 authentication flow for Google API access
+    \item The system shall provide a user consent URL for authorization
+    \item The system shall handle callback from Google's authorization server
+    \item The system shall store and validate access tokens
+    \item The system shall support refresh token mechanism for extended access
+    \item The system shall allow users to verify existing credentials before re-authentication
+\end{itemize}
+
+\subsection{FR5: Google Sheets Integration}
+\begin{itemize}
+    \item The system shall create or update Google Sheets with processed pixel data
+    \item The system shall format each cell with appropriate RGB background color
+    \item The system shall use batch update operations for efficient data upload
+    \item The system shall set appropriate column widths and row heights for square pixels
+    \item The system shall handle API rate limits and errors gracefully
+\end{itemize}
+
+\subsection{FR6: Command-Line Interface}
+\begin{itemize}
+    \item The system shall provide clear prompts for user interaction
+    \item The system shall display progress information during processing
+    \item The system shall output the final Google Sheets URL upon completion
+    \item The system shall handle user input validation (yes/no responses)
+\end{itemize}
+
+\section{Non-Functional Requirements}
+
+Non-functional requirements specify quality attributes and constraints of the system.
+
+\subsection{NFR1: Performance}
+\begin{itemize}
+    \item Image resizing shall complete within 2 seconds for typical input images
+    \item Convolution processing shall complete within 5 seconds for 400×300 images
+    \item Google Sheets upload shall complete within 30 seconds for 120,000 cells
+    \item The system shall efficiently utilize CPU and memory resources
+\end{itemize}
+
+\subsection{NFR2: Reliability}
+\begin{itemize}
+    \item The system shall handle network failures during API communication
+    \item The system shall validate all user inputs before processing
+    \item The system shall provide meaningful error messages for all failure scenarios
+    \item The system shall not crash due to invalid input or network errors
+\end{itemize}
+
+\subsection{NFR3: Security}
+\begin{itemize}
+    \item The system shall securely store API credentials in environment variables
+    \item The system shall use HTTPS for all API communications
+    \item The system shall implement OAuth 2.0 standard for authentication
+    \item The system shall not log or display sensitive tokens in plain text
+\end{itemize}
+
+\subsection{NFR4: Usability}
+\begin{itemize}
+    \item The CLI interface shall be intuitive and self-explanatory
+    \item Error messages shall be clear and actionable
+    \item The authentication flow shall be straightforward for non-technical users
+    \item Documentation shall be comprehensive and easy to follow
+\end{itemize}
+
+\subsection{NFR5: Maintainability}
+\begin{itemize}
+    \item The codebase shall follow Rust best practices and idioms
+    \item Modules shall be loosely coupled and highly cohesive
+    \item Functions shall be well-documented with clear purposes
+    \item The system shall be easily extensible for additional features
+\end{itemize}
+
+\subsection{NFR6: Portability}
+\begin{itemize}
+    \item The system shall run on Windows, Linux, and macOS platforms
+    \item The system shall not depend on platform-specific features
+    \item All dependencies shall be cross-platform compatible
+\end{itemize}
+
+\section{Software Requirements}
+
+The following software components are required for development, deployment, and execution of the Sheesee system:
+
+\subsection{Programming Language and Compiler}
+\begin{itemize}
+    \item \textbf{Rust:} Version 1.70 or higher with 2024 edition support
+    \item \textbf{Cargo:} Rust's package manager and build system (bundled with Rust)
+\end{itemize}
+
+\subsection{Core Dependencies}
+
+The project relies on several Rust crates (libraries) specified in \texttt{Cargo.toml}:
+
+\begin{table}[h]
+\centering
+\caption{Software Dependencies and Their Purposes}
+\label{tab:dependencies}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Crate} & \textbf{Version} & \textbf{Purpose} \\
+\hline
+axum & 0.8.7 & Web framework for OAuth callback server \\
+\hline
+tokio & 1.48.0 & Asynchronous runtime for async operations \\
+\hline
+image & 0.25.9 & Image loading, manipulation, and resizing \\
+\hline
+sheets & 0.7.0 & Google Sheets API client library \\
+\hline
+serde & 1.0.228 & Serialization/deserialization framework \\
+\hline
+serde\_json & 1.0.145 & JSON parsing and generation \\
+\hline
+dotenv & 0.15.0 & Environment variable management \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Development Tools}
+\begin{itemize}
+    \item \textbf{Text Editor/IDE:} Visual Studio Code, IntelliJ IDEA with Rust plugin, or any editor with Rust support
+    \item \textbf{Git:} Version control system for source code management
+    \item \textbf{rustfmt:} Code formatter for consistent Rust code style
+    \item \textbf{clippy:} Linting tool for catching common mistakes
+\end{itemize}
+
+\subsection{Runtime Environment}
+\begin{itemize}
+    \item \textbf{Operating System:} Windows 10/11, Linux (Ubuntu 20.04+), or macOS 11+
+    \item \textbf{Network Access:} Internet connectivity for Google API communication
+    \item \textbf{Web Browser:} For OAuth authentication flow (Chrome, Firefox, Edge, Safari)
+\end{itemize}
+
+\subsection{Google Cloud Platform Requirements}
+\begin{itemize}
+    \item \textbf{Google Cloud Project:} Active GCP project with Google Sheets API enabled
+    \item \textbf{OAuth 2.0 Credentials:} Client ID and Client Secret for installed application
+    \item \textbf{Redirect URI:} Configured to \texttt{http://localhost:8080}
+\end{itemize}
+
+\section{Hardware Requirements}
+
+The hardware requirements are minimal due to the efficient nature of Rust and the relatively small image size being processed.
+
+\begin{table}[h]
+\centering
+\caption{Minimum and Recommended Hardware Specifications}
+\label{tab:hardware}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Component} & \textbf{Minimum} & \textbf{Recommended} \\
+\hline
+Processor & Dual-core 2.0 GHz & Quad-core 2.5 GHz or higher \\
+\hline
+RAM & 4 GB & 8 GB or higher \\
+\hline
+Storage & 500 MB free space & 1 GB free space \\
+\hline
+Display & 1024×768 resolution & 1920×1080 or higher \\
+\hline
+Network & Broadband internet & High-speed broadband \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Justification for Hardware Requirements}
+
+\begin{itemize}
+    \item \textbf{Processor:} The convolution operation requires moderate computational power. A dual-core processor can handle 400×300 pixel processing, but a quad-core provides better performance for compilation and concurrent operations.
+    
+    \item \textbf{RAM:} 4 GB is sufficient for basic operation, but 8 GB ensures smooth execution alongside other applications. The image data requires approximately 360 KB (400×300×3 bytes), well within these limits.
+    
+    \item \textbf{Storage:} The compiled binary is typically under 50 MB, with additional space needed for Cargo cache and sample images.
+    
+    \item \textbf{Network:} Stable internet connection is essential for OAuth flow and uploading 120,000 cells to Google Sheets. Higher bandwidth reduces upload time.
+\end{itemize}
+
+\section{System Constraints}
+
+Several constraints influence the system design and implementation:
+
+\subsection{Technical Constraints}
+\begin{itemize}
+    \item \textbf{Google Sheets Limitations:} Maximum 10 million cells per spreadsheet, though 120,000 cells are well within this limit
+    \item \textbf{API Rate Limits:} Google Sheets API has quotas (100 requests per 100 seconds per user)
+    \item \textbf{Image Size:} Fixed output resolution of 400×300 pixels to balance detail and rendering time
+\end{itemize}
+
+\subsection{Design Constraints}
+\begin{itemize}
+    \item \textbf{CLI-only Interface:} No graphical user interface, limiting accessibility for non-technical users
+    \item \textbf{Single Image Processing:} Processes one image at a time rather than batch processing
+    \item \textbf{Fixed Kernel:} Currently supports only one convolution kernel (sharpening)
+\end{itemize}
+
+\subsection{Operational Constraints}
+\begin{itemize}
+    \item \textbf{Internet Dependency:} Requires active internet connection for API access
+    \item \textbf{Google Account:} Users must have a Google account for authentication
+    \item \textbf{API Credentials:} Requires pre-configured Google Cloud project and OAuth credentials
+\end{itemize}
+
+This system analysis provides the foundation for understanding the technical requirements and constraints that guide the implementation phase, which is detailed in the following chapter.

@@ -1,0 +1,17 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces General Block Diagram of the Sheesee System}}{6}{figure.caption.5}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces OAuth 2.0 Authentication Flow Sequence}}{18}{figure.caption.8}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces CLI Startup Screen with Authentication Prompt}}{27}{figure.caption.9}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces OAuth User Consent URL Generation}}{28}{figure.caption.10}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Google Account Authorization Page}}{29}{figure.caption.11}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Successful Authorization Completion}}{30}{figure.caption.12}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Sample Input Image (Original Resolution)}}{31}{figure.caption.13}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Resized Image (400×300 pixels)}}{32}{figure.caption.14}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Comparison of Images Before and After Convolution}}{33}{figure.caption.15}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Complete Image Rendered in Google Sheets}}{34}{figure.caption.17}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Zoomed View of Google Sheets Cells Showing Individual Pixels}}{35}{figure.caption.18}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Cell Format Properties Showing RGB Values}}{36}{figure.caption.19}%
+\addvspace {10\p@ }

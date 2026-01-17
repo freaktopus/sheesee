@@ -1,0 +1,12 @@
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+This project presents a novel Command-Line Interface (CLI) based image processing system implemented in Rust that integrates convolution-based image manipulation with cloud-based visualization through the Google Sheets API. The system accepts images of arbitrary resolution, resizes them to a standardized 400×300 pixel format, applies convolution filters for edge enhancement using a custom sharpening kernel, and exports the processed pixel data as color-coded cells to Google Sheets, creating a unique visual representation.
+
+The implementation leverages Rust's performance and memory safety features, utilizing the \texttt{image} crate for image manipulation, OAuth 2.0 for secure authentication with Google's services, and the Axum web framework for handling authentication callbacks. The convolution algorithm employs a 3×3 sharpening kernel that enhances edges and details in the input image. The Google Sheets integration uses batch update operations to efficiently render 120,000 cells (400 columns × 300 rows) with RGB color values, transforming the spreadsheet into a pixel canvas.
+
+This project demonstrates the practical application of digital image processing concepts, API integration, and asynchronous programming, showcasing how cloud platforms can serve as unconventional visualization mediums. The system addresses the challenge of processing and displaying large-scale pixel data through optimized batch operations and proper memory management. Future enhancements include support for multiple convolution kernels, real-time video stream processing, and animated visualizations in Google Sheets.
+
+\textbf{Keywords:} Image Processing, Convolution, Google Sheets API, Rust, CLI Application, OAuth 2.0, Computer Vision
+
+\newpage

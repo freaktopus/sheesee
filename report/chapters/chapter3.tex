@@ -1,0 +1,468 @@
+\chapter{System Implementation}
+
+\section{Introduction}
+
+This chapter provides a detailed description of the implementation of the Sheesee image processing system. It covers the architectural design, core algorithms, module-specific implementations, and the integration of various components to achieve the desired functionality. The implementation leverages Rust's strong type system, memory safety guarantees, and powerful concurrency features to build a robust and efficient application.
+
+\section{System Architecture}
+
+The Sheesee system follows a modular architecture with clear separation of concerns. The codebase is organized into the following module structure:
+
+\begin{itemize}
+    \item \textbf{main.rs:} Entry point, OAuth flow orchestration, and high-level control flow
+    \item \textbf{img module:} Image processing functionality
+    \begin{itemize}
+        \item \textbf{extract.rs:} Image loading and pixel extraction
+        \item \textbf{compute.rs:} Convolution operations
+    \end{itemize}
+    \item \textbf{sheets\_core module:} Google Sheets API integration
+    \begin{itemize}
+        \item \textbf{batch\_update.rs:} Batch update request construction and execution
+    \end{itemize}
+\end{itemize}
+
+\section{Configuration and Setup}
+
+\subsection{Environment Variables}
+
+The system uses environment variables stored in a \texttt{.env} file for configuration. This approach enhances security by keeping sensitive credentials separate from the source code.
+
+\begin{lstlisting}[language=bash, caption=Required Environment Variables]
+CLIENT_ID=<your_google_client_id>
+CLIENT_SECRET=<your_google_client_secret>
+REDIRECT_URI=http://localhost:8080
+TOKEN=<access_token>
+REFRESH_TOKEN=<refresh_token>
+\end{lstlisting}
+
+The \texttt{dotenv} crate loads these variables at runtime:
+
+\begin{lstlisting}[language=Rust, caption=Environment Variable Loading]
+use dotenv::dotenv;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    dotenv().ok();
+    
+    let client_id = env::var("CLIENT_ID")?;
+    let client_secret = env::var("CLIENT_SECRET")?;
+    // ... additional variables
+}
+\end{lstlisting}
+
+\subsection{Dependency Management}
+
+Dependencies are managed through \texttt{Cargo.toml}, Rust's manifest file:
+
+\begin{lstlisting}[caption=Key Dependencies in Cargo.toml]
+[dependencies]
+axum = "0.8.7"           # Web framework
+tokio = { version = "1.48.0", features = ["macros", "rt-multi-thread"] }
+image = "0.25.9"         # Image processing
+sheets = "0.7.0"         # Google Sheets API
+serde = "1.0.228"        # Serialization
+serde_json = "1.0.145"   # JSON handling
+dotenv = "0.15.0"        # Environment variables
+\end{lstlisting}
+
+\section{Image Processing Implementation}
+
+\subsection{Image Loading and Resizing}
+
+The \texttt{extract.rs} module handles image loading and resizing operations. The \texttt{ImageFeature} struct encapsulates the pixel data:
+
+\begin{lstlisting}[language=Rust, caption=Image Feature Extraction Structure]
+pub struct ImageFeature {
+    pub pixels_data: Vec<Vec<(u8, u8, u8)>>,
+}
+
+impl ImageFeature {
+    pub fn extract_pixels_feature() -> Self {
+        let img = image::ImageReader::open("image/sample.jpg")
+            .expect("Failed to open image")
+            .decode()
+            .expect("Failed to decode image")
+            .to_rgb8();
+
+        // Resize to 400x300 using Lanczos3 filter
+        let img = image::imageops::resize(
+            &img, 400, 300, 
+            FilterType::Lanczos3
+        );
+        
+        // Extract pixels into 2D vector
+        let (width, height) = img.dimensions();
+        let mut pixels_data_temp = Vec::with_capacity(height as usize);
+
+        for y in 0..height {
+            let mut row = Vec::with_capacity(width as usize);
+            for x in 0..width {
+                let pixel = *img.get_pixel(x, y);
+                row.push((pixel[0], pixel[1], pixel[2]));
+            }
+            pixels_data_temp.push(row);
+        }
+
+        ImageFeature { pixels_data: pixels_data_temp }
+    }
+}
+\end{lstlisting}
+
+\textbf{Key Implementation Details:}
+\begin{itemize}
+    \item Uses \texttt{ImageReader} for flexible format support (JPEG, PNG, etc.)
+    \item Converts image to RGB8 format ensuring consistent 8-bit per channel representation
+    \item Applies Lanczos3 interpolation for high-quality resizing with minimal artifacts
+    \item Stores pixels in row-major order matching Google Sheets cell layout
+\end{itemize}
+
+\subsection{Convolution Algorithm}
+
+The \texttt{compute.rs} module implements the convolution operation using a sharpening kernel:
+
+\begin{lstlisting}[language=Rust, caption=Convolution Implementation]
+pub struct ComputeConvolution {
+    pub computed_pixels: Vec<Vec<(u8, u8, u8)>>,
+}
+
+impl ComputeConvolution {
+    pub fn extract_pixels_feature(pixels_data: &ImageFeature) -> Self {
+        // Sharpening kernel
+        let kernel: [[i32; 3]; 3] = [
+            [0, -1, 0],
+            [-1, 5, -1],
+            [0, -1, 0]
+        ];
+
+        let height = pixels_data.pixels_data.len();
+        let width = pixels_data.pixels_data[0].len();
+        let mut computed_pixels = vec![vec![(0u8, 0u8, 0u8); width]; height];
+
+        // Apply convolution (excluding 1-pixel border)
+        for y in 1..(height - 1) {
+            for x in 1..(width - 1) {
+                let mut sum_r: i32 = 0;
+                let mut sum_g: i32 = 0;
+                let mut sum_b: i32 = 0;
+
+                // Convolve with 3x3 kernel
+                for ky in 0..3 {
+                    for kx in 0..3 {
+                        let pixel = pixels_data.pixels_data[y + ky - 1][x + kx - 1];
+                        let weight = kernel[ky][kx];
+                        sum_r += pixel.0 as i32 * weight;
+                        sum_g += pixel.1 as i32 * weight;
+                        sum_b += pixel.2 as i32 * weight;
+                    }
+                }
+
+                // Clamp values to [0, 255]
+                let r = sum_r.clamp(0, 255) as u8;
+                let g = sum_g.clamp(0, 255) as u8;
+                let b = sum_b.clamp(0, 255) as u8;
+
+                computed_pixels[y][x] = (r, g, b);
+            }
+        }
+
+        ComputeConvolution { computed_pixels }
+    }
+}
+\end{lstlisting}
+
+\textbf{Algorithm Analysis:}
+\begin{itemize}
+    \item \textbf{Time Complexity:} O(W × H × K²) where W=400, H=300, K=3, resulting in approximately 1.08 million operations
+    \item \textbf{Space Complexity:} O(W × H) for storing output image
+    \item \textbf{Boundary Handling:} Border pixels (1-pixel width) are left unprocessed, set to (0, 0, 0)
+    \item \textbf{Overflow Prevention:} Uses i32 for intermediate calculations, then clamps to u8 range
+\end{itemize}
+
+The sharpening kernel works by:
+\begin{equation}
+I_{sharpened}(x,y) = 5 \cdot I(x,y) - I(x-1,y) - I(x+1,y) - I(x,y-1) - I(x,y+1)
+\end{equation}
+
+This amplifies the central pixel while subtracting its neighbors, enhancing edges and fine details.
+
+\section{OAuth 2.0 Authentication}
+
+\subsection{Authentication Flow}
+
+The system implements the OAuth 2.0 authorization code flow for secure API access:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{oauth_flow.png}
+    \caption{OAuth 2.0 Authentication Flow Sequence}
+    \label{fig:oauth_flow}
+\end{figure}
+
+\subsection{Implementation Details}
+
+\begin{lstlisting}[language=Rust, caption=OAuth Callback Handler]
+#[derive(Deserialize, Debug, Clone)]
+struct OauthVar {
+    code: String,
+    state: String,
+}
+
+async fn oauth_callback(
+    Query(params): Query<OauthVar>,
+    Extension(store): Extension<Arc<Mutex<Option<OauthVar>>>>,
+) -> String {
+    let mut lock = store.lock().unwrap();
+    *lock = Some(params);
+    "Authorization complete - you can close this window.".into()
+}
+\end{lstlisting}
+
+The main function orchestrates the authentication:
+
+\begin{lstlisting}[language=Rust, caption=OAuth Flow Orchestration (Simplified)]
+// Create OAuth store for callback data
+let oauth_store: Arc<Mutex<Option<OauthVar>>> = Arc::new(Mutex::new(None));
+
+// Set up Axum web server for callback
+let app = Router::new()
+    .route("/", get(oauth_callback))
+    .layer(Extension(oauth_store.clone()));
+
+let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
+let server = tokio::spawn(async move {
+    axum::serve(listener, app).await.unwrap();
+});
+
+// Generate and display user consent URL
+let user_consent_url = google_sheets.user_consent_url(&[
+    "https://www.googleapis.com/auth/spreadsheets".to_string(),
+]);
+println!("Open this URL in your browser:\n{}", user_consent_url);
+
+// Wait for OAuth callback
+let oauth_var: OauthVar = loop {
+    if let Some(oauth) = oauth_store.lock().unwrap().clone() {
+        break oauth;
+    }
+    tokio::time::sleep(Duration::from_millis(300)).await;
+};
+
+// Exchange authorization code for access token
+let access_token = google_sheets.get_access_token(
+    &oauth_var.code, 
+    &oauth_var.state
+).await?;
+\end{lstlisting}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Local Callback Server:} Axum web framework handles OAuth redirect
+    \item \textbf{Thread-Safe State:} Arc<Mutex<>> enables safe sharing between async tasks
+    \item \textbf{Polling Mechanism:} Checks for callback completion every 300ms
+    \item \textbf{User Experience:} Clear prompts guide users through authentication
+\end{itemize}
+
+\section{Google Sheets Integration}
+
+\subsection{Data Structure Transformation}
+
+The system transforms pixel data into Google Sheets API format:
+
+\begin{lstlisting}[language=Rust, caption=Cell Data Construction]
+for row_pixels in &pixels.computed_pixels {
+    let mut cells: Vec<CellData> = Vec::with_capacity(width);
+
+    for &(r, g, b) in row_pixels {
+        cells.push(CellData {
+            user_entered_format: Some(CellFormat {
+                background_color: Some(Color {
+                    red: r as f64 / 255.0,
+                    green: g as f64 / 255.0,
+                    blue: b as f64 / 255.0,
+                    alpha: 1.0,
+                }),
+                // ... other format fields set to None
+            }),
+            // ... other cell fields
+        });
+    }
+
+    rows.push(RowData { values: cells });
+}
+\end{lstlisting}
+
+Color values are normalized from [0, 255] to [0.0, 1.0] as required by the Sheets API.
+
+\subsection{Batch Update Request}
+
+The system uses batch update operations for efficiency:
+
+\begin{lstlisting}[language=Rust, caption=Batch Update Structure (Simplified)]
+let update_cells = Request {
+    update_cells: Some(UpdateCellsRequest {
+        fields: "userEnteredFormat.backgroundColor".to_string(),
+        range: Some(GridRange {
+            sheet_id: 0,
+            start_row_index: 0,
+            end_row_index: height as i64,
+            start_column_index: 0,
+            end_column_index: width as i64,
+        }),
+        rows: rows,
+        start: None,
+    }),
+    // ... all other request fields set to None
+};
+\end{lstlisting}
+
+\textbf{Optimization Strategies:}
+\begin{itemize}
+    \item \textbf{Single API Call:} All 120,000 cells updated in one batch request
+    \item \textbf{Selective Fields:} Only \texttt{backgroundColor} field updated, reducing payload size
+    \item \textbf{Pre-allocated Vectors:} \texttt{Vec::with\_capacity()} minimizes reallocations
+\end{itemize}
+
+\subsection{Cell Dimension Adjustment}
+
+To render square pixels, column widths and row heights are adjusted:
+
+\begin{lstlisting}[language=Rust, caption=Dimension Adjustment Request]
+let set_col_width = Request {
+    update_dimension_properties: Some(UpdateDimensionPropertiesRequest {
+        range: Some(DimensionRange {
+            sheet_id: 0,
+            dimension: Dimension::Columns,
+            start_index: Some(0),
+            end_index: Some(width as i64),
+        }),
+        properties: DimensionProperties {
+            pixel_size: Some(3), // 3 pixels per cell
+            // ... other properties
+        },
+        fields: "pixelSize".to_string(),
+    }),
+    // ... other fields
+};
+\end{lstlisting}
+
+Similar requests are made for row heights, ensuring a 1:1 aspect ratio for visual accuracy.
+
+\section{Command-Line Interface}
+
+\subsection{User Interaction Flow}
+
+The CLI guides users through the process:
+
+\begin{lstlisting}[language=Rust, caption=Interactive Credential Check]
+let spreadsheets = loop {
+    print!("Is the access code in .env valid? (y/n): ");
+    io::stdout().flush()?;
+    let mut buf = String::new();
+    io::stdin().read_line(&mut buf)?;
+
+    match buf.trim().to_lowercase().as_str() {
+        "y" => {
+            // Use existing credentials
+            break google_sheets.spreadsheets();
+        }
+        "n" => {
+            // Run OAuth flow
+            // ... (authentication code)
+        }
+        _ => println!("Please type y or n."),
+    }
+};
+\end{lstlisting}
+
+\subsection{Progress Feedback}
+
+The system provides feedback at key stages:
+
+\begin{lstlisting}[language=Rust, caption=Progress Messages]
+println!("Image resized to 400x300 pixels");
+println!("Image size: {}x{}", width, height);
+println!("Rendered image to Google Sheets!");
+println!("View at: https://docs.google.com/spreadsheets/d/{}", sheets_id);
+\end{lstlisting}
+
+\section{Error Handling}
+
+Rust's \texttt{Result} type and the \texttt{?} operator enable robust error propagation:
+
+\begin{lstlisting}[language=Rust, caption=Error Handling Pattern]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Operations that may fail
+    let img = image::ImageReader::open("image/sample.jpg")?;
+    let token = google_sheets.get_access_token(code, state).await?;
+    batch_update::draw_in_sheets(&pixels, &spreadsheets, sheets_id).await?;
+    
+    Ok(())
+}
+\end{lstlisting}
+
+Errors are propagated up to main, where they're displayed to the user. The \texttt{expect()} method is used for unrecoverable errors with descriptive messages.
+
+\section{Asynchronous Operations}
+
+The system leverages Tokio for asynchronous I/O:
+
+\begin{lstlisting}[language=Rust, caption=Tokio Runtime Configuration]
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Async operations
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
+    tokio::spawn(async move { /* server */ });
+    tokio::time::sleep(Duration::from_millis(300)).await;
+}
+\end{lstlisting}
+
+The \texttt{tokio::main} macro sets up a multi-threaded runtime, enabling efficient concurrent execution.
+
+\section{Memory Management}
+
+Rust's ownership system ensures memory safety:
+
+\begin{itemize}
+    \item \textbf{Ownership:} Each value has a single owner; memory is freed when owner goes out of scope
+    \item \textbf{Borrowing:} References (\&T) allow read access without transferring ownership
+    \item \textbf{No Garbage Collection:} Deterministic memory management with zero runtime overhead
+\end{itemize}
+
+Example from the codebase:
+\begin{lstlisting}[language=Rust]
+// ImageFeature owns pixels_data
+let image_pixel_data = extract::ImageFeature::extract_pixels_feature();
+
+// ComputeConvolution borrows image_pixel_data
+let compute_pixels = compute::ComputeConvolution::extract_pixels_feature(
+    &image_pixel_data
+);
+
+// batch_update borrows compute_pixels
+batch_update::draw_in_sheets(&compute_pixels, &spreadsheets, sheets_id).await?;
+\end{lstlisting}
+
+This borrowing pattern prevents unnecessary data copies while maintaining safety.
+
+\section{Performance Considerations}
+
+\subsection{Compilation Optimizations}
+
+Release builds use aggressive optimizations:
+\begin{lstlisting}[caption=Cargo Release Profile]
+[profile.release]
+opt-level = 3        # Maximum optimizations
+lto = true           # Link-time optimization
+codegen-units = 1    # Better optimization (slower compile)
+\end{lstlisting}
+
+\subsection{Algorithmic Efficiency}
+
+\begin{itemize}
+    \item \textbf{Vector Pre-allocation:} \texttt{Vec::with\_capacity()} avoids reallocations
+    \item \textbf{Direct Indexing:} Array indexing instead of iterators in hot loops
+    \item \textbf{Batch API Calls:} Single request instead of 120,000 individual calls
+    \item \textbf{No Unnecessary Copies:} Borrowing and move semantics minimize allocations
+\end{itemize}
+
+The implementation demonstrates a balance between code clarity and performance, leveraging Rust's zero-cost abstractions to achieve both goals simultaneously.

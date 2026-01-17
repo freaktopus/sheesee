@@ -5,8 +5,8 @@ pub struct ImageFeature {
 }
 
 impl ImageFeature {
-    pub fn extract_pixels_feature() -> Self {
-        let img = image::ImageReader::open("image/sample.jpg")
+    pub fn extract_pixels_feature(image_path: &str) -> Self {
+        let img = image::ImageReader::open(image_path)
             .expect("Failed to open image")
             .decode()
             .expect("Failed to decode image")

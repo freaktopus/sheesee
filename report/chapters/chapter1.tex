@@ -1,0 +1,112 @@
+\chapter{Introduction}
+
+\section{Introduction}
+
+In the modern era of digital computing, image processing has become an integral part of various applications ranging from medical imaging to social media filters, computer vision, and artificial intelligence. The ability to manipulate and analyze digital images programmatically opens doors to countless possibilities in automation, data visualization, and creative expression.
+
+This project explores an unconventional approach to image visualization by combining traditional image processing techniques with cloud-based spreadsheet applications. Named "Sheesee," this system transforms any input image into a visual representation rendered within Google Sheets, where each cell represents a pixel with its corresponding RGB color value. This innovative approach demonstrates how cloud platforms designed for data management can be repurposed for creative visualization tasks.
+
+The system is implemented as a command-line application using Rust, a systems programming language known for its performance, memory safety, and concurrent programming capabilities. By leveraging convolution operations—a fundamental technique in digital image processing—the system enhances image features before rendering them to the cloud canvas.
+
+\section{Background}
+
+\subsection{Digital Image Processing}
+
+Digital image processing involves the manipulation of digital images through computer algorithms. An image can be represented as a two-dimensional matrix where each element (pixel) contains color information. In the RGB color space, each pixel is represented by three values ranging from 0 to 255, corresponding to the intensity of red, green, and blue channels.
+
+Image processing operations can be broadly categorized into:
+\begin{itemize}
+    \item \textbf{Point operations:} Operations that transform each pixel independently (e.g., brightness adjustment, contrast enhancement)
+    \item \textbf{Local operations:} Operations that consider neighborhoods of pixels (e.g., convolution, filtering)
+    \item \textbf{Global operations:} Operations that consider the entire image (e.g., Fourier transforms, histogram equalization)
+\end{itemize}
+
+\subsection{Convolution Operations}
+
+Convolution is a mathematical operation that combines two functions to produce a third function. In image processing, convolution involves sliding a small matrix (kernel or filter) over the image and computing weighted sums of pixel neighborhoods. The general formula for 2D convolution is:
+
+\begin{equation}
+g(x,y) = \sum_{i=-k}^{k} \sum_{j=-k}^{k} f(x+i, y+j) \cdot h(i,j)
+\end{equation}
+
+where $f(x,y)$ is the input image, $h(i,j)$ is the kernel, and $g(x,y)$ is the output image.
+
+Common convolution kernels include:
+\begin{itemize}
+    \item \textbf{Gaussian blur:} Smoothens images by averaging neighboring pixels
+    \item \textbf{Edge detection:} Identifies boundaries using kernels like Sobel or Laplacian
+    \item \textbf{Sharpening:} Enhances edges and details by amplifying high-frequency components
+\end{itemize}
+
+Our system employs a sharpening kernel:
+\begin{equation}
+K_{sharpen} = \begin{bmatrix}
+0 & -1 & 0 \\
+-1 & 5 & -1 \\
+0 & -1 & 0
+\end{bmatrix}
+\end{equation}
+
+This kernel enhances the central pixel while suppressing its neighbors, resulting in edge enhancement and increased image clarity.
+
+\subsection{Google Sheets as a Visualization Medium}
+
+Google Sheets is a cloud-based spreadsheet application that allows users to create, edit, and collaborate on spreadsheets online. While traditionally used for data organization and analysis, its cell-based structure makes it suitable for pixel-based visualizations. Each cell can be assigned a background color, effectively turning the spreadsheet into a low-resolution display.
+
+The Google Sheets API provides programmatic access to spreadsheet data and formatting, enabling automated creation and manipulation of spreadsheets. Key features include:
+\begin{itemize}
+    \item Batch update operations for efficient bulk modifications
+    \item Cell formatting capabilities including background colors
+    \item OAuth 2.0 authentication for secure access
+    \item RESTful API design for language-agnostic integration
+\end{itemize}
+
+\subsection{Rust Programming Language}
+
+Rust is a systems programming language that emphasizes memory safety, concurrency, and performance. Its ownership model prevents common programming errors like null pointer dereferencing and data races without requiring garbage collection. Key features relevant to this project include:
+\begin{itemize}
+    \item \textbf{Zero-cost abstractions:} High-level code with performance comparable to C/C++
+    \item \textbf{Memory safety:} Compile-time guarantees preventing memory leaks and undefined behavior
+    \item \textbf{Concurrency:} Safe concurrent programming through ownership rules
+    \item \textbf{Cargo ecosystem:} Rich package manager with extensive libraries (crates)
+\end{itemize}
+
+\section{Objectives}
+
+The primary objectives of this project are:
+
+\begin{enumerate}
+    \item \textbf{Develop a robust image processing pipeline} that can accept various image formats (JPEG, PNG, etc.) and standardize them to a fixed resolution suitable for Google Sheets rendering.
+    
+    \item \textbf{Implement convolution-based image enhancement} using a sharpening kernel to improve edge definition and overall image clarity before visualization.
+    
+    \item \textbf{Integrate with Google Sheets API} to programmatically create and populate spreadsheets with processed image data, where each cell represents a pixel with appropriate RGB coloring.
+    
+    \item \textbf{Design a secure authentication system} using OAuth 2.0 to authorize the application to access and modify Google Sheets on behalf of the user.
+    
+    \item \textbf{Optimize performance} for handling large-scale data uploads (120,000 cells) through batch operations and efficient memory management.
+    
+    \item \textbf{Create a user-friendly CLI interface} that guides users through the authentication process and image processing workflow.
+    
+    \item \textbf{Demonstrate practical applications} of digital image processing concepts in a novel visualization context.
+\end{enumerate}
+
+\section{Contributions}
+
+This project makes several notable contributions:
+
+\begin{enumerate}
+    \item \textbf{Novel visualization approach:} Demonstrates the use of Google Sheets as an unconventional medium for image visualization, expanding the creative possibilities of cloud platforms.
+    
+    \item \textbf{Efficient batch processing:} Implements optimized batch update strategies for handling large-scale cell formatting operations in Google Sheets, overcoming API rate limits and performance constraints.
+    
+    \item \textbf{Cross-platform image processing:} Provides a CLI-based solution that works across different operating systems without requiring graphical dependencies.
+    
+    \item \textbf{Educational resource:} Serves as a practical example of integrating multiple technologies (image processing, OAuth authentication, API integration) in a single application.
+    
+    \item \textbf{Extensible architecture:} Designs a modular codebase that can be extended to support additional convolution kernels, real-time video processing, and animated visualizations.
+    
+    \item \textbf{Open-source implementation:} Provides well-documented Rust code that can serve as a reference for developers working with similar technologies.
+\end{enumerate}
+
+The following chapters detail the system analysis, implementation specifics, experimental results, and conclusions drawn from this project.
